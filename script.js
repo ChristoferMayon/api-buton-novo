@@ -1,43 +1,26 @@
-
-const instanceId = "3E35940B51C1C013896CD24EFB273D33";
-const instanceToken = "EBD857C4A382BEE196399FA6";
-const numero = "5541995810993";
-
 function enviarMensagem() {
-  const mensagem = document.getElementById("mensagem").value;
+  const numero = document.getElementById("numero").value.trim();
+  const mensagem = document.getElementById("mensagem").value.trim();
+  const tituloBotao = document.getElementById("tituloBotao").value.trim();
+  const linkBotao = document.getElementById("linkBotao").value.trim();
   const log = document.getElementById("log");
 
-  const payload = {
-    phone: numero,
-    message: mensagem,
-    buttonActions: [
-      {
-        id: "1",
-        type: "URL",
-        url: "https://seusite.com",
-        label: "Visitar Site"
-      },
-      {
-        id: "2",
-        type: "CALL",
-        phone: "5541999999999",
-        label: "Ligar Agora"
-      }
-    ]
-  };
+  if (!numero || !mensagem || !tituloBotao || !linkBotao) {
+    alert("Por favor, preencha todos os campos.");
+    return;
+  }
 
-  fetch(`https://api.z-api.io/instances/${instanceId}/token/${instanceToken}/send-button-actions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
+  fetch('/api/enviar-mensagem', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ numero, mensagem, tituloBotao, linkBotao })
   })
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
-    log.innerText = "✅ Mensagem enviada com sucesso:\n" + JSON.stringify(data, null, 2);
+    log.innerText = "✅ Resposta do servidor:\n" + JSON.stringify(data, null, 2);
   })
-  .catch(error => {
-    log.innerText = "❌ Erro ao enviar: " + error.message;
+  .catch(err => {
+    log.innerText = "❌ Erro na requisição: " + err.message;
   });
 }
+
